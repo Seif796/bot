@@ -9,7 +9,7 @@ from telegram import (
     InlineKeyboardMarkup,
     KeyboardButton,
     ReplyKeyboardMarkup,
-    ReplyKeyboardRemove
+    ReplyKeyboardRemove,
 )
 from telegram.ext import (
     Application,
@@ -41,7 +41,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_text = (
         "🚀 **البوت شغال وبجاهزية كاملة!**\n\n"
         "الأوامر المتاحة:\n"
-        "• 🔍 `/findid` - مشاركة جهة اتصال أو عمل Forward لرسالة لجلب الـ User ID\n"
+        "• 🔍 `/findid` - اختر صديقك من جهات الاتصال أو اعمل Forward لرسالته لجلب الـ User ID\n"
         "• 📅 `/schedule <HH:MM> <user_id> <message>` - جدولة رسالة لشخص معين\n"
         "• ⏰ `/alarm <HH:MM> <label>` - ضبط منبه (يرسل 10 رسائل متتالية)\n"
         "• ⏳ `/timer <seconds> <label>` - مؤقت تنازلي (يرسل 10 رسائل متتالية)\n"
@@ -55,14 +55,14 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # -------------------------------------------------------------------
 async def find_id_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     contact_button = KeyboardButton(
-        text="🎴 مشاركة جهة الاتصال لمعرفة الـ ID",
+        text="🎴 اختر صديقك من جهات الاتصال",
         request_contact=True
     )
     custom_keyboard = ReplyKeyboardMarkup([[contact_button]], resize_keyboard=True, one_time_keyboard=True)
     
     await update.message.reply_text(
         "🔎 **أداة استخراج الـ User ID:**\n\n"
-        "1️⃣ اضغط على الزر بالأسفل لمشاركة جهة اتصال.\n"
+        "1️⃣ اضغط على الزر بالأسفل واختر الصديق من جهات الاتصال.\n"
         "2️⃣ أو قم بعمل **Forward (توجيه)** لأي رسالة من صديقك إلى البوت مباشرة وسيقوم باستخراج الـ ID فوراً.",
         reply_markup=custom_keyboard,
         parse_mode="Markdown"
