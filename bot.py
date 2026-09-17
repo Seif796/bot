@@ -41,7 +41,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_text = (
         "🚀 **البوت شغال وبجاهزية كاملة!**\n\n"
         "الأوامر المتاحة:\n"
-        "• 🔍 `/findid` - اختر صديقك من جهات الاتصال أو اعمل Forward لرسالته لجلبت الـ User ID\n"
+        "• 🔍 `/findid` - مشاركة جهة اتصال أو عمل Forward لرسالة لجلب الـ User ID\n"
         "• 📅 `/schedule <HH:MM> <user_id> <message>` - جدولة رسالة لشخص معين\n"
         "• ⏰ `/alarm <HH:MM> <label>` - ضبط منبه (يرسل 10 رسائل متتالية)\n"
         "• ⏳ `/timer <seconds> <label>` - مؤقت تنازلي (يرسل 10 رسائل متتالية)\n"
