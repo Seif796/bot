@@ -42,8 +42,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_text = (
         "🚀 **البوت شغال وبجاهزية كاملة!**\n\n"
         "الأوامر المتاحة:\n"
-        "• 🔍 `/findid` - اختر صديقك من جهات الاتصال لمعرفة الـ User ID\n"
-        "• 📅 `/schedule <HH:MM> <user_id> <message>` - جدولة رسالة بشخص معين\n"
+        "• 🔍 `/findid` - اختر صديقك من جهات الاتصال أو اعمل Forward لرسالته لجلبت الـ User ID\n"
+        "• 📅 `/schedule <HH:MM> <user_id> <message>` - جدولة رسالة لشخص معين\n"
         "• ⏰ `/alarm <HH:MM> <label>` - ضبط منبه (يرسل 10 رسائل متتالية)\n"
         "• ⏳ `/timer <seconds> <label>` - مؤقت تنازلي (يرسل 10 رسائل متتالية)\n"
         "• 🕒 `/clock` - عرض وقت السيرفر الحالي\n"
@@ -52,10 +52,9 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(welcome_text, parse_mode="Markdown")
 
 # -------------------------------------------------------------------
-# 2. Find User ID Tool (Select Contact Directly)
+# 2. Find User ID Tool (Select Contact or Forward Message)
 # -------------------------------------------------------------------
 async def find_id_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # استخدام KeyboardButtonRequestContact يتيح للمستخدم اختيار أي جهة اتصال من هاتفه
     contact_button = KeyboardButton(
         text="🎴 اختر صديقك من جهات الاتصال",
         request_contact=KeyboardButtonRequestContact(request_id=1)
@@ -64,8 +63,10 @@ async def find_id_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await update.message.reply_text(
         "🔎 **أداة استخراج الـ User ID:**\n\n"
-        "اضغط على الزر بالأسفل واختر الصديق الذي تريد معرفة الـ User ID الخاص به:",
-        reply_markup=custom_keyboard
+        "1️⃣ اضغط على الزر بالأسفل واختر الصديق من جهات الاتصال.\n"
+        "2️⃣ أو قم بعمل **Forward (توجيه)** لأي رسالة من صديقك إلى البوت مباشرة وسيقوم باستخراج الـ ID فوراً.",
+        reply_markup=custom_keyboard,
+        parse_mode="Markdown"
     )
 
 async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -92,6 +93,20 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     await update.message.reply_text(response, parse_mode="Markdown", reply_markup=ReplyKeyboardRemove())
+
+async def forwarded_message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    forward_info = update.message.forward_from
+    if forward_info:
+        await update.message.reply_text(
+            f"🆔 **User ID للشخص الموجه منه الرسالة:**\n\n"
+            f"• **الاسم:** {forward_info.first_name}\n"
+            f"• **User ID:** `{forward_info.id}`",
+            parse_mode="Markdown"
+        )
+    else:
+        await update.message.reply_text(
+            "⚠️ لا يمكن استخراج الـ ID لأن حساب هذا الشخص مخصص برفض إظهار الرابط عند إعادة التوجيه (Privacy Settings)."
+        )
 
 # -------------------------------------------------------------------
 # 3. Telegram Message Scheduler Tool
@@ -328,8 +343,9 @@ def main():
     app.add_handler(CommandHandler("clock", clock_tool))
     app.add_handler(CommandHandler("stopwatch", stopwatch_tool))
 
-    # Handlers for Contacts and Callbacks
+    # Handlers for Contacts, Forwarded Messages, and Callbacks
     app.add_handler(MessageHandler(filters.CONTACT, contact_handler))
+    app.add_handler(MessageHandler(filters.FORWARDED, forwarded_message_handler))
     app.add_handler(CallbackQueryHandler(stopwatch_callback, pattern="^sw_"))
 
     logger.info("Bot initialized and ready!")
